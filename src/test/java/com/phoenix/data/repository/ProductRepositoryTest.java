@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,5 +56,39 @@ class ProductRepositoryTest {
 
         log.info("Product retrieved :: {}", product);
     }
+    @Test
+    @DisplayName("Find all products in the database")
+    void findAllProductsTest(){
+       List<Product> productList = productRepository.findAll();
+        assertThat(productList).isNotNull();
+        assertThat(productList.size()).isEqualTo(4);
+    }
+    @Test
+    @DisplayName("Find products by name")
+    void findProductByName(){
+        Product product = productRepository.findByName("Luxury Mop").orElse(null);
+        assertThat(product).isNotNull();
+        assertThat(product.getId()).isEqualTo(12);
+        assertThat(product.getPrice()).isEqualTo(2340);
+        assertThat(product.getQuantity()).isEqualTo(3);
 
+        log.info("Product retrieved :: {}", product);
+    }
+
+    @Test
+    @DisplayName("Update product by id")
+    void UpdateProductById(){
+      Product savedProduct = productRepository.findByName("Macbook Air").orElse(null);
+      assertThat(savedProduct).isNotNull();
+
+      assertThat(savedProduct.getName()).isEqualTo("Macbook Air");
+      assertThat(savedProduct.getPrice()).isEqualTo(18320);
+      savedProduct.setName("Macbook Air 13");
+      savedProduct.setPrice(23420);
+
+      productRepository.save(savedProduct);
+      assertThat(savedProduct.getName()).isEqualTo("Macbook Air 13");
+      assertThat(savedProduct.getPrice()).isEqualTo(23420);
+    }
 }
+//(13,"Macbook Air",18320,4),
